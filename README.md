@@ -18,7 +18,7 @@ Run the endpoint
 python main.py 
 ```
 
-Tun unitests
+Run unitests
 ```
 python tests.py 
 ```
