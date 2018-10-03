@@ -1,6 +1,18 @@
 from fetcher import opengraph
 
 def extract(url):
+    """Fetches data from the URL
+
+    Parameters
+    ----------
+    url_base : str
+        URL of the website we fetch data from
+        
+    Returns
+    -------
+    dictionary
+        data fetched from the website
+    """
     try:
         data = opengraph.OpenGraph(url=url,scrape=True)
         if data.is_valid():
