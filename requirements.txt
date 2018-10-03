@@ -1,0 +1,4 @@
+flask
+re
+urllib2
+beautifulsoup4

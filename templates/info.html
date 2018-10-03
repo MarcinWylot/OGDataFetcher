@@ -1,0 +1,17 @@
+<!doctype html>
+<html>
+  <head>
+	<title>Open Graph Data Fetcher</title>
+  </head>
+  <body>
+	<h1>Title: {{ title }}</h1>
+    <h5>URL: {{ url }}
+    {% if description %}
+    <h5>Description:</h5> {{ description }}<
+    {% endif %}
+     {% if description %}
+    <h5>Image:</h5> {{ img }}<br />
+    <img src="{{ img }}" alt="{{ title }}">
+    {% endif %}
+  </body>
+</html>
