@@ -2,23 +2,9 @@
 # with small changes
 
 import re
+import urllib.request
+import bs4
 
-try:
-    import urllib2
-except ImportError:
-    from urllib import request as urllib2
-
-try:
-    from bs4 import BeautifulSoup
-except ImportError:
-    from BeautifulSoup import BeautifulSoup
-
-global import_json
-try:
-    import json
-    import_json = True
-except ImportError:
-    import_json = False
 
 class OpenGraph(dict):
     """
@@ -28,7 +14,7 @@ class OpenGraph(dict):
     expected_attrs = required_attrs + ['image', 'description']
 
     def __init__(self, url=None, html=None, scrape=False, **kwargs):
-        # If scrape == True, then will try to fetch missing attribtues
+        # If scrape == True, then will try to fetch missing attributes
         # from the page's body
 
         self.scrape = scrape
@@ -54,21 +40,21 @@ class OpenGraph(dict):
     def fetch(self, url):
         """
         """
-        raw = urllib2.urlopen(url)
+        raw = urllib.request.urlopen(url)
         html = raw.read()
         return self.parser(html)
 
     def parser(self, html):
         """
         """
-        if not isinstance(html,BeautifulSoup):
-            doc = BeautifulSoup(html, "lxml")
+        if not isinstance(html, bs4.BeautifulSoup):
+            doc = bs4.BeautifulSoup(html, "html5lib")
         else:
             doc = html
         ogs = doc.html.head.findAll(property=re.compile(r'^og'))
         for og in ogs:
             if og.has_attr(u'content'):
-                self[og[u'property'][3:]]=og[u'content']
+                self[og[u'property'][3:]] = og[u'content']
         # Couldn't fetch all attrs from og tags, try scraping body
         if not self.is_valid() and self.scrape:
             for attr in self.expected_attrs:
@@ -89,45 +75,41 @@ class OpenGraph(dict):
             return u"<meta property=\"og:error\" content=\"og metadata is not valid\" />"
 
         meta = u""
-        for key,value in self.iteritems():
-            meta += u"\n<meta property=\"og:%s\" content=\"%s\" />" %(key, value)
+        for key, value in self.iteritems():
+            meta += u"\n<meta property=\"og:%s\" content=\"%s\" />" % (key, value)
         meta += u"\n"
 
         return meta
 
-    def to_json(self):
-        # TODO: force unicode
-        global import_json
-        if not import_json:
-            return "{'error':'there isn't json module'}"
-
-        if not self.is_valid():
-            return json.dumps({'error':'og metadata is not valid'})
-
-        return json.dumps(self)
+    def to_json(self) -> object:
+        pass
 
     def to_xml(self):
         pass
 
-    def scrape_image(self, doc):
+    @staticmethod
+    def scrape_image(doc: object) -> object:
         images = [dict(img.attrs)['src']
-            for img in doc.html.body.findAll('img')]
+                  for img in doc.html.body.findAll('img')]
 
         if images:
             return images[0]
 
         return u''
 
-    def scrape_title(self, doc):
+    @staticmethod
+    def scrape_title(doc: object) -> object:
         return doc.html.head.title.text
 
-    def scrape_type(self, doc):
+    @staticmethod
+    def scrape_type(doc):
         return 'other'
 
     def scrape_url(self, doc):
         return self._url
 
-    def scrape_description(self, doc):
-        tag = doc.html.head.findAll('meta', attrs={"name":"description"})
+    @staticmethod
+    def scrape_description(doc):
+        tag = doc.html.head.findAll('meta', attrs={"name": "description"})
         result = "".join([t['content'] for t in tag])
         return result

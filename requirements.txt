@@ -1,4 +1,3 @@
 flask
-re
-urllib2
 beautifulsoup4
+html5lib

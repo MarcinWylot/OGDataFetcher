@@ -9,7 +9,7 @@ Simple HTTP API endpoint that takes a URL, and returns the following metadata:
 </ul>
 
 
-Data is scraped from the Open Graph tags, if there are no Open Graph tags availablethe data is retrieved from HTML meta tags (e.g., title, description).
+Data is scraped from the Open Graph tags, if there are no Open Graph tags available data is retrieved from HTML meta tags (e.g., title, description).
 
 
 Run the endpoint
